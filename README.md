@@ -31,6 +31,20 @@ python -m http.server 8000
 
 Then open <http://localhost:8000>.
 
+## Verify the bundle
+
+A no-dependency sanity check before committing:
+
+```bash
+node --check js/main.js
+```
+
+The same command runs on every push and pull request in
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml). Pushes
+to `main` then publish the static site to GitHub Pages — enable Pages
+once under **Settings → Pages → Source: GitHub Actions** and the
+workflow takes over.
+
 ## Keyboard shortcuts
 
 - `N` creates a new habit
