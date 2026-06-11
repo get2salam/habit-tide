@@ -173,6 +173,15 @@ textarea {
   border-color: rgba(255,255,255,0.18);
 }
 
+.btn:focus-visible,
+.item:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--secondary);
+  outline-offset: 3px;
+}
+
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: #07101f;
@@ -262,6 +271,10 @@ textarea {
 .item.is-selected {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.item[aria-current="true"] .score::before {
+  content: "Selected · ";
 }
 
 .item p,

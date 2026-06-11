@@ -45,10 +45,12 @@ to `main` then publish the static site to GitHub Pages — enable Pages
 once under **Settings → Pages → Source: GitHub Actions** and the
 workflow takes over.
 
-## Keyboard shortcuts
+## Keyboard and accessibility
 
 - `N` creates a new habit
 - `/` focuses the search box
+- visible focus rings make tab navigation clear across actions, filters, and habit cards
+- habit cards announce the selected item, status, consistency, and next check-in to screen readers
 
 ## Privacy
 

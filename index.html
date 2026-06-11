@@ -16,9 +16,9 @@
           <p class="lede">Track habits with cues, reset plans, and check-in dates so consistency is visible before it slips.</p>
         </div>
         <div class="actions">
-          <button class="btn" data-action="import">Import</button>
-          <button class="btn" data-action="export">Export</button>
-          <button class="btn btn-primary" data-action="new">New habit</button>
+          <button class="btn" data-action="import" aria-label="Import a Habit Tide JSON backup">Import</button>
+          <button class="btn" data-action="export" aria-label="Export this Habit Tide board as JSON">Export</button>
+          <button class="btn btn-primary" data-action="new" aria-label="Create a new habit">New habit</button>
           <input id="import-file" type="file" accept=".json,application/json" hidden />
         </div>
       </header>
@@ -38,7 +38,7 @@
       <section class="controls card">
         <label>
           <span>Search</span>
-          <input type="search" data-field="search" placeholder="Search habits, notes, and next steps..." />
+          <input type="search" data-field="search" aria-label="Search habits, notes, cues, and resets" placeholder="Search habits, notes, and next steps..." />
         </label>
         <label>
           <span>Habit type</span>
@@ -48,7 +48,7 @@
           <span>Status</span>
           <select data-field="status"></select>
         </label>
-        <button class="btn" type="button" data-action="reset">Re-seed sample</button>
+        <button class="btn" type="button" data-action="reset" aria-label="Restore the sample Habit Tide board">Re-seed sample</button>
       </section>
 
       <section class="workspace">
@@ -60,7 +60,7 @@
             </div>
             <span class="chip" data-role="count"></span>
           </div>
-          <div class="list" data-role="list"></div>
+          <div class="list" data-role="list" aria-live="polite"></div>
         </article>
         <article class="card editor-panel" data-role="editor"></article>
       </section>

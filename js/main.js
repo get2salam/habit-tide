@@ -177,6 +177,9 @@ const refs = {
 const toastHost = (() => {
   const host = document.createElement('div');
   host.className = 'toast-host';
+  host.setAttribute('role', 'status');
+  host.setAttribute('aria-live', 'polite');
+  host.setAttribute('aria-atomic', 'true');
   document.body.appendChild(host);
   return host;
 })();
@@ -476,31 +479,32 @@ function renderInsights(items) {
 
 function renderList(items) {
   if (!items.length) {
+    const hasFilters = state.ui.search || state.ui.category !== 'all' || state.ui.status !== 'all';
     refs.list.innerHTML = `
       <div class="empty">
-        <strong>${SPEC.emptyTitle}</strong>
-        <p>${SPEC.emptyBody}</p>
+        <strong>${hasFilters ? 'No matching habits' : SPEC.emptyTitle}</strong>
+        <p>${hasFilters ? 'Try a broader search, habit type, or status filter.' : SPEC.emptyBody}</p>
       </div>
     `;
     return;
   }
 
   refs.list.innerHTML = items.map((item) => `
-    <button class="item ${item.id === state.ui.selectedId ? 'is-selected' : ''}" type="button" data-id="${item.id}">
+    <button class="item ${item.id === state.ui.selectedId ? 'is-selected' : ''}" type="button" data-id="${escapeHtml(item.id)}" aria-current="${item.id === state.ui.selectedId ? 'true' : 'false'}" aria-label="Select ${escapeHtml(item.title)}. ${escapeHtml(item.state)} habit, ${SPEC.metric.label.toLowerCase()} ${item.metric} of ${SPEC.metric.max}, next check-in ${formatDate(item.date)}.">
       <div class="item-top">
-        <strong>${item.title}</strong>
+        <strong>${escapeHtml(item.title)}</strong>
         <span class="score">${priority(item)}</span>
       </div>
-      <p>${item.note}</p>
+      <p>${escapeHtml(item.note)}</p>
       <div class="badge-row">
         <span class="pill ${toneForDate(item)}">${formatDate(item.date)}</span>
-        <span class="pill">${item.textOne}</span>
+        <span class="pill">${escapeHtml(item.textOne)}</span>
         <span class="pill">${SPEC.metric.label} ${item.metric}/${SPEC.metric.max}</span>
       </div>
       <div class="meta">
-        <span>${item.category}</span>
-        <span>${item.state}</span>
-        <span>${SPEC.textTwo.label}: ${item.textTwo}</span>
+        <span>${escapeHtml(item.category)}</span>
+        <span>${escapeHtml(item.state)}</span>
+        <span>${SPEC.textTwo.label}: ${escapeHtml(item.textTwo)}</span>
         <span>Friction ${item.effort}/10</span>
       </div>
     </button>
