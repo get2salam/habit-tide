@@ -32,6 +32,9 @@ jobs:
       - name: Syntax-check the app bundle
         run: node --check js/main.js
 
+      - name: Run regression tests
+        run: node --test tests/*.test.mjs
+
   deploy:
     name: Publish to GitHub Pages
     needs: verify
@@ -46,6 +49,8 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3

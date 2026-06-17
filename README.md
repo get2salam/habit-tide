@@ -37,9 +37,10 @@ A no-dependency sanity check before committing:
 
 ```bash
 node --check js/main.js
+node --test tests/*.test.mjs
 ```
 
-The same command runs on every push and pull request in
+The same syntax check and focused regression tests run on every push and pull request in
 [`.github/workflows/pages.yml`](.github/workflows/pages.yml). Pushes
 to `main` then publish the static site to GitHub Pages — enable Pages
 once under **Settings → Pages → Source: GitHub Actions** and the

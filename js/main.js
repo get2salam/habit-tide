@@ -200,29 +200,48 @@ function uid() {
   return `${SPEC.slug}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
+function toISODate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 function todayISO(offset = 0) {
   const date = new Date();
   date.setHours(0, 0, 0, 0);
   date.setDate(date.getDate() + offset);
-  return date.toISOString().slice(0, 10);
+  return toISODate(date);
+}
+
+function dateFromISO(value) {
+  if (typeof value !== 'string') return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return null;
+  const [, year, month, day] = match.map(Number);
+  const date = new Date(year, month - 1, day);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  date.setHours(0, 0, 0, 0);
+  return date;
 }
 
 function daysFromToday(value) {
-  if (!value) return 999;
+  const target = dateFromISO(value);
+  if (!target) return 999;
   const today = new Date(`${todayISO()}T00:00:00`);
-  const target = new Date(`${value}T00:00:00`);
   return Math.round((target - today) / 86400000);
 }
 
 function bumpDate(value, days) {
-  const date = new Date(`${value || todayISO()}T00:00:00`);
+  const date = dateFromISO(value) || dateFromISO(todayISO());
   date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
+  return toISODate(date);
 }
 
 function formatDate(value) {
-  if (!value) return 'No date';
-  return new Date(`${value}T00:00:00`).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+  const date = dateFromISO(value);
+  if (!date) return 'No date';
+  return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
 }
 
 function escapeHtml(value) {
@@ -233,8 +252,13 @@ function escapeHtml(value) {
     .replaceAll('"', '&quot;');
 }
 
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, Number(value)));
+function finiteNumber(value, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function clamp(value, min, max, fallback = min) {
+  return Math.max(min, Math.min(max, finiteNumber(value, fallback)));
 }
 
 function completedStates() {
@@ -260,12 +284,12 @@ function normalize(item = {}) {
     note: item.note || SPEC.defaults.note,
     category: SPEC.categories.includes(item.category) ? item.category : SPEC.categories[0],
     state: SPEC.states.includes(item.state) ? item.state : SPEC.states[0],
-    score: clamp(item.score ?? 7, 1, 10),
-    effort: clamp(item.effort ?? 3, 1, 10),
-    metric: clamp(item.metric ?? SPEC.metric.default ?? 6, SPEC.metric.min, SPEC.metric.max),
+    score: clamp(item.score, 1, 10, 7),
+    effort: clamp(item.effort, 1, 10, 3),
+    metric: clamp(item.metric, SPEC.metric.min, SPEC.metric.max, SPEC.metric.default ?? 6),
     textOne: item.textOne || SPEC.textOne.default,
     textTwo: item.textTwo || SPEC.textTwo.default,
-    date: item.date || todayISO(3),
+    date: dateFromISO(item.date) ? item.date : todayISO(3),
   };
 }
 
@@ -713,5 +737,7 @@ document.addEventListener('keydown', (event) => {
     refs.search.focus();
   }
 });
+
+export { bumpDate, clamp, daysFromToday, formatDate, normalize, todayISO };
 
 render();
