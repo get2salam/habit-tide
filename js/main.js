@@ -308,6 +308,15 @@ function seedState() {
   };
 }
 
+function normalizeUi(ui = {}) {
+  const merged = { ...seedState().ui, ...ui };
+  return {
+    ...merged,
+    category: merged.category === 'all' || SPEC.categories.includes(merged.category) ? merged.category : 'all',
+    status: merged.status === 'all' || SPEC.states.includes(merged.status) ? merged.status : 'all',
+  };
+}
+
 function hydrate() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -317,7 +326,7 @@ function hydrate() {
       ...seedState(),
       ...parsed,
       items: (parsed.items || []).map((item) => normalize(item)),
-      ui: { ...seedState().ui, ...(parsed.ui || {}) },
+      ui: normalizeUi(parsed.ui),
     };
   } catch (error) {
     console.warn('Falling back to seed state', error);
@@ -409,7 +418,7 @@ async function importState(file) {
     ...seedState(),
     ...parsed,
     items: (parsed.items || []).map((item) => normalize(item)),
-    ui: { ...seedState().ui, ...(parsed.ui || {}) },
+    ui: normalizeUi(parsed.ui),
   });
   showToast('Imported backup.');
 }
@@ -738,6 +747,6 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-export { bumpDate, clamp, daysFromToday, formatDate, normalize, todayISO };
+export { bumpDate, clamp, daysFromToday, formatDate, normalize, normalizeUi, todayISO };
 
 render();
