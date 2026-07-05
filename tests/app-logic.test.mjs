@@ -74,6 +74,25 @@ test('normalizes corrupted numeric and date fields from backups', () => {
   assert.notEqual(item.date, '2026-02-31');
 });
 
+test('normalize survives a null or non-object row instead of throwing', () => {
+  assert.doesNotThrow(() => app.normalize(null));
+  assert.doesNotThrow(() => app.normalize(undefined));
+  assert.doesNotThrow(() => app.normalize('not-an-object'));
+
+  const fromNull = app.normalize(null);
+  assert.equal(typeof fromNull.id, 'string');
+  assert.equal(fromNull.title, 'New habit');
+});
+
+test('a backup with one null row among valid habits keeps the valid habits instead of losing the whole import', () => {
+  const rows = [{ title: 'Kept habit', category: 'Health' }, null, { title: 'Also kept', category: 'Work' }];
+
+  assert.doesNotThrow(() => rows.map((item) => app.normalize(item)));
+  const normalized = rows.map((item) => app.normalize(item));
+  assert.equal(normalized[0].title, 'Kept habit');
+  assert.equal(normalized[2].title, 'Also kept');
+});
+
 test('date helpers tolerate invalid imported dates without leaking Invalid Date', () => {
   assert.equal(app.daysFromToday('not-a-date'), 999);
   assert.equal(app.formatDate('2026-02-31'), 'No date');

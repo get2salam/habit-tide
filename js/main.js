@@ -277,7 +277,8 @@ function toneForDate(item) {
   return 'success';
 }
 
-function normalize(item = {}) {
+function normalize(item) {
+  if (typeof item !== 'object' || item === null) item = {};
   return {
     id: item.id || uid(),
     title: item.title || `New ${SPEC.itemLabel}`,
